@@ -43,12 +43,12 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-  FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 2048K
   DTCMRAM (xrw)  : ORIGIN = 0x20000000, LENGTH = 128K
   RAM_D1 (xrw)   : ORIGIN = 0x24000000, LENGTH = 512K
   RAM_D2 (xrw)   : ORIGIN = 0x30000000, LENGTH = 288K
   RAM_D3 (xrw)   : ORIGIN = 0x38000000, LENGTH = 64K
   ITCMRAM (xrw)  : ORIGIN = 0x00000000, LENGTH = 64K
+  FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 2048K
 }
 
 /* Define output sections */
@@ -165,6 +165,22 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM_D1
+
+  .eth_sec (NOLOAD) :
+  {
+    . = ABSOLUTE(0x30040000);
+    *(.RxDescripSection)
+
+    . = ABSOLUTE(0x30040080);
+    *(.TxDescripSection)
+
+    . = ABSOLUTE(0x30040200);
+    *(.NetXPoolSection)
+
+    . = ABSOLUTE(0x30043200);
+    *(.UsbXPoolSection)
+
+  } >RAM_D2 AT> FLASH
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
