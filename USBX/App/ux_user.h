@@ -167,7 +167,7 @@
 /* Defined, this value is the maximum number of classes in the device stack that can be loaded by
    USBX.  */
 
-#define UX_MAX_SLAVE_CLASS_DRIVER    1
+#define UX_MAX_SLAVE_CLASS_DRIVER    2
 
 /* Defined, this value represents the number of different host controllers available in the system.
    For USB 1.1 support, this value will usually be 1. For USB 2.0 support, this value can be more
@@ -254,7 +254,7 @@
    is 4096 bytes but can be reduced in memory constrained environments. For cd-rom support in the storage
    class, this value cannot be less than 2048.  */
 
-/* #define UX_SLAVE_REQUEST_DATA_MAX_LENGTH                 4096 */
+#define UX_SLAVE_REQUEST_DATA_MAX_LENGTH                    2048
 
 /* Defined, it enables zero copy support (works if PRINTER owns endpoint buffer).
     Defined, it enables zero copy for bulk in/out endpoints (write/read). In this case, the endpoint
@@ -431,11 +431,11 @@
 
 /* #define UX_DEVICE_CLASS_CDC_ACM_TRANSMISSION_DISABLE */
 
-/* Defined, this macro enables device audio feedback endpoint support.  */
+/* defined, this macro enables device audio feedback endpoint support.  */
 
 /* #define UX_DEVICE_CLASS_AUDIO_FEEDBACK_SUPPORT  */
 
-/* Defined, this macro enables device audio interrupt endpoint support.  */
+/* defined, this macro enables device audio interrupt endpoint support.  */
 
 /* #define UX_DEVICE_CLASS_AUDIO_INTERRUPT_SUPPORT  */
 
@@ -479,6 +479,10 @@
  */
 
 /* #define UX_HOST_DEVICE_CLASS_CODE_VALIDATION_ENABLE  */
+
+/* Defined, host HID interrupt OUT transfer is supported.  */
+
+/* #define UX_HOST_CLASS_HID_INTERRUPT_OUT_SUPPORT  */
 
 /* Define HID report transfer timeout value in millisecond.
    The default is 10000 milliseconds.  */
@@ -540,7 +544,7 @@
    - ux_host_class_storage_media_unlock : unlock media
    Note it's forced defined/enabled in standalone mode of usbx.
 */
-/* #define UX_HOST_CLASS_STORAGE_NO_FILEX */
+/* #define UX_HOST_CLASS_STORAGE_NO_FILEX  */
 
 /* Defined, this value represents the maximum size of single transfers for the SCSI data phase.
    By default it's 1024.

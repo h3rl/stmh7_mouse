@@ -18,10 +18,6 @@
   */
 /* USER CODE END Header */
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_usbx_device.h"
 
@@ -93,6 +89,7 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
                        USBX_DEVICE_MEMORY_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS)
   {
     /* USER CODE BEGIN USBX_ALLOCATE_STACK_ERROR */
+    printf("USBX POOL_ERROR: Could not allocate USBX stack memory!\r\n");
     return TX_POOL_ERROR;
     /* USER CODE END USBX_ALLOCATE_STACK_ERROR */
   }
@@ -101,6 +98,7 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
   if (ux_system_initialize(pointer, USBX_DEVICE_MEMORY_STACK_SIZE, UX_NULL, 0) != UX_SUCCESS)
   {
     /* USER CODE BEGIN USBX_SYSTEM_INITIALIZE_ERROR */
+    printf("USBX System Initialization Error\r\n");
     return UX_ERROR;
     /* USER CODE END USBX_SYSTEM_INITIALIZE_ERROR */
   }
@@ -131,6 +129,7 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
                                  UX_NULL) != UX_SUCCESS)
   {
     /* USER CODE BEGIN USBX_DEVICE_INITIALIZE_ERROR */
+    printf("USBX Device Stack Initialization Error\r\n");
     return UX_ERROR;
     /* USER CODE END USBX_DEVICE_INITIALIZE_ERROR */
   }
@@ -202,6 +201,7 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
                        TX_NO_WAIT) != TX_SUCCESS)
   {
     /* USER CODE BEGIN MAIN_THREAD_ALLOCATE_STACK_ERROR */
+    printf("USBX POOL_ERROR: Could not allocate main thread stack!\r\n");
     return TX_POOL_ERROR;
     /* USER CODE END MAIN_THREAD_ALLOCATE_STACK_ERROR */
   }
@@ -213,6 +213,7 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
                        UX_DEVICE_APP_THREAD_START_OPTION) != TX_SUCCESS)
   {
     /* USER CODE BEGIN MAIN_THREAD_CREATE_ERROR */
+    printf("USBX MAIN THREAD CREATE ERROR\r\n");
     return TX_THREAD_ERROR;
     /* USER CODE END MAIN_THREAD_CREATE_ERROR */
   }
@@ -236,6 +237,6 @@ static VOID app_ux_device_thread_entry(ULONG thread_input)
   /* USER CODE END app_ux_device_thread_entry */
 }
 
-/* USER CODE BEGIN 2 */
+/* USER CODE BEGIN 1 */
 
-/* USER CODE END 2 */
+/* USER CODE END 1 */

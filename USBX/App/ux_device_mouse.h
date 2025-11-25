@@ -25,10 +25,6 @@
 extern "C" {
 #endif
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 #include "ux_api.h"
 #include "ux_device_class_hid.h"
@@ -70,9 +66,9 @@ UINT USBD_HID_Mouse_GetReport(UX_SLAVE_CLASS_HID *hid_instance,
 
 /* USER CODE END PD */
 
-/* USER CODE BEGIN 2 */
+/* USER CODE BEGIN 1 */
 
-/* USER CODE END 2 */
+/* USER CODE END 1 */
 
 #ifdef __cplusplus
 }

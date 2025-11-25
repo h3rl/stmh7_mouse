@@ -25,10 +25,6 @@
 extern "C" {
 #endif
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 #include "nx_api.h"
 
@@ -92,9 +88,9 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr);
 
 #define NX_APP_DEFAULT_NET_MASK                     IP_ADDRESS(255, 255, 255, 0)
 
-/* USER CODE BEGIN 2 */
+/* USER CODE BEGIN 1 */
 
-/* USER CODE END 2 */
+/* USER CODE END 1 */
 
 #ifdef __cplusplus
 }

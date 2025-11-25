@@ -25,10 +25,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 #include "tx_api.h"
 
@@ -70,9 +66,9 @@ void MX_ThreadX_Init(void);
 
 /* USER CODE END EFP */
 
-/* USER CODE BEGIN 2 */
+/* USER CODE BEGIN 1 */
 
-/* USER CODE END 2 */
+/* USER CODE END 1 */
 
 #ifdef __cplusplus
 }

@@ -18,10 +18,6 @@
   */
 /* USER CODE END Header */
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 #include "ux_device_descriptors.h"
 
@@ -985,6 +981,6 @@ static void  USBD_FrameWork_HID_Desc(USBD_DevClassHandleTypeDef *pdev,
 }
 #endif /* USBD_HID_CLASS_ACTIVATED */
 
-/* USER CODE BEGIN 2 */
+/* USER CODE BEGIN 1 */
 
-/* USER CODE END 2 */
+/* USER CODE END 1 */

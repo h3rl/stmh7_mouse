@@ -25,10 +25,6 @@
 extern "C" {
 #endif
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 #include "ux_api.h"
 #include "ux_stm32_config.h"
@@ -295,7 +291,7 @@ uint16_t USBD_HID_ReportDesc_length(uint8_t hid_type);
 #define USBD_HID_MOUSE_EPIN_HS_BINTERVAL              5U
 
 /* Device HID Keyboard */
-#define USBD_HID_KEYBOARD_EPIN_ADDR                   0x81U
+#define USBD_HID_KEYBOARD_EPIN_ADDR                   0x82U
 #define USBD_HID_KEYBOARD_EPIN_FS_MPS                 4U
 #define USBD_HID_KEYBOARD_EPIN_HS_MPS                 4U
 #define USBD_HID_KEYBOARD_EPIN_FS_BINTERVAL           5U
@@ -346,11 +342,6 @@ uint16_t USBD_HID_ReportDesc_length(uint8_t hid_type);
                                 pIfDesc->iInterface = (istring); \
                                 *Sze += (uint32_t)sizeof(USBD_IfDescTypedef); \
                               } while(0)
-
-/* USER CODE BEGIN 2 */
-
-/* USER CODE END 2 */
-
 #ifdef __cplusplus
 }
 #endif

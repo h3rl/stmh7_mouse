@@ -23,7 +23,7 @@
 
 //#define USE_DYNAMIC_MEMORY_ALLOCATION
 
-#if defined (__ARMCC_VERSION) /* For arm compiler 5 & 6 */
+#if defined(__clang__)
 @/**************************************************************************/
 @/*                                                                        */
 @/*       Copyright (c) Microsoft Corporation. All rights reserved.        */
@@ -47,11 +47,6 @@
 @/**************************************************************************/
 @
 @
-
-#ifdef TX_INCLUDE_USER_DEFINE_FILE
-#include "tx_user.h"
-#endif
-
     .global     _tx_thread_system_stack_ptr
     .global     _tx_initialize_unused_memory
     .global     _tx_timer_interrupt
@@ -284,11 +279,6 @@ __tx_DBGHandler:
 ;/**************************************************************************/
 ;/**************************************************************************/
 ;
-
-#ifdef TX_INCLUDE_USER_DEFINE_FILE
-#include "tx_user.h"
-#endif
-
     EXTERN  _tx_thread_system_stack_ptr
     EXTERN  _tx_initialize_unused_memory
     EXTERN  _tx_timer_interrupt
@@ -438,7 +428,7 @@ SysTick_Handler:
     END
 #endif
 
-#if (defined(__GNUC__) && !defined(__ARMCC_VERSION))
+#if defined (__GNUC__) && !defined(__clang__)
 @/**************************************************************************/
 @/*                                                                        */
 @/*       Copyright (c) Microsoft Corporation. All rights reserved.        */
@@ -462,11 +452,6 @@ SysTick_Handler:
 @/**************************************************************************/
 @
 @
-
-#ifdef TX_INCLUDE_USER_DEFINE_FILE
-#include "tx_user.h"
-#endif
-
     .global     _tx_thread_system_stack_ptr
     .global     _tx_initialize_unused_memory
     .global     __RAM_segment_used_end__

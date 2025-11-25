@@ -18,10 +18,6 @@
   */
 /* USER CODE END Header */
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 
 #include "app_azure_rtos.h"
@@ -73,6 +69,13 @@ __ALIGN_BEGIN static UCHAR nx_byte_pool_buffer[NX_APP_MEM_POOL_SIZE] __ALIGN_END
 static TX_BYTE_POOL nx_app_byte_pool;
 
 /* USER CODE BEGIN UX_Device_Pool_Buffer */
+#if defined ( __ICCARM__ ) /* IAR Compiler */
+#pragma location = ".UsbXPoolSection"
+#elif defined ( __CC_ARM ) || defined(__ARMCC_VERSION) /* ARM Compiler 5/6 */
+__attribute__((section(".UsbXPoolSection")))
+#elif defined ( __GNUC__ ) /* GNU Compiler */
+__attribute__((section(".UsbXPoolSection")))
+#endif
 /* USER CODE END UX_Device_Pool_Buffer */
 #if defined ( __ICCARM__ )
 #pragma data_alignment=4
@@ -99,7 +102,7 @@ static TX_BYTE_POOL ux_device_app_byte_pool;
 VOID tx_application_define(VOID *first_unused_memory)
 {
   /* USER CODE BEGIN  tx_application_define_1*/
-
+  (void)first_unused_memory;
   /* USER CODE END  tx_application_define_1 */
 #if (USE_STATIC_ALLOCATION == 1)
   UINT status = TX_SUCCESS;
@@ -108,13 +111,11 @@ VOID tx_application_define(VOID *first_unused_memory)
   if (tx_byte_pool_create(&tx_app_byte_pool, "Tx App memory pool", tx_byte_pool_buffer, TX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
   {
     /* USER CODE BEGIN TX_Byte_Pool_Error */
-
     /* USER CODE END TX_Byte_Pool_Error */
   }
   else
   {
     /* USER CODE BEGIN TX_Byte_Pool_Success */
-
     /* USER CODE END TX_Byte_Pool_Success */
 
     memory_ptr = (VOID *)&tx_app_byte_pool;
@@ -129,7 +130,7 @@ VOID tx_application_define(VOID *first_unused_memory)
     }
 
     /* USER CODE BEGIN  App_ThreadX_Init_Success */
-
+    printf("ThreadX Initialized\r\n");
     /* USER CODE END  App_ThreadX_Init_Success */
 
   }
@@ -137,13 +138,11 @@ VOID tx_application_define(VOID *first_unused_memory)
   if (tx_byte_pool_create(&nx_app_byte_pool, "Nx App memory pool", nx_byte_pool_buffer, NX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
   {
     /* USER CODE BEGIN NX_Byte_Pool_Error */
-
     /* USER CODE END NX_Byte_Pool_Error */
   }
   else
   {
     /* USER CODE BEGIN NX_Byte_Pool_Success */
-
     /* USER CODE END NX_Byte_Pool_Success */
 
     memory_ptr = (VOID *)&nx_app_byte_pool;
@@ -158,7 +157,7 @@ VOID tx_application_define(VOID *first_unused_memory)
     }
 
     /* USER CODE BEGIN MX_NetXDuo_Init_Success */
-
+    printf("NetX Duo Initialized\r\n");
     /* USER CODE END MX_NetXDuo_Init_Success */
 
   }
@@ -180,6 +179,9 @@ VOID tx_application_define(VOID *first_unused_memory)
     if (status != UX_SUCCESS)
     {
       /* USER CODE BEGIN  MX_USBX_Device_Init_Error */
+
+      printf("USBX Device Initialization Error\r\n");
+      printf("Status: %d\r\n", status);
       while(1)
       {
       }
@@ -187,7 +189,7 @@ VOID tx_application_define(VOID *first_unused_memory)
     }
 
     /* USER CODE BEGIN MX_USBX_Device_Init_Success */
-
+    printf("USBX Device Initialized\r\n");
     /* USER CODE END MX_USBX_Device_Init_Success */
   }
 
@@ -227,7 +229,3 @@ VOID tx_application_define(VOID *first_unused_memory)
 #endif
 
 }
-
-/* USER CODE BEGIN 2 */
-
-/* USER CODE END 2 */

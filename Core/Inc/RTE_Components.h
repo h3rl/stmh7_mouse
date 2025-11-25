@@ -22,13 +22,13 @@
 #define  __RTE_COMPONENTS_H__
 
 /* Defines ------------------------------------------------------------------*/
-/* STMicroelectronics.X-CUBE-AZRTOS-H7.3.4.0 */
+/* STMicroelectronics.X-CUBE-AZRTOS-H7.3.3.0 */
 #define USBXDEVICE_ENABLED
 #define UX_DEVICE_CONTROLLERS_ENABLED
 #define UX_DEVICE_HID_CORE
 #define UX_DEVICE_HID_MOUSE
 #define UX_DEVICE_HID_KEYBOARD
-#define NX_ETH_INTERFACE_ENABLED
+NX_ETH_INTERFACE_ENABLED
 #define LAN8742
 #define THREADX_ENABLED
 #define NETXDUO_ENABLED

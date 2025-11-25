@@ -19,16 +19,14 @@
 
 /* USER CODE END Header */
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_netxduo.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "nx_api.h"
+#include "stm32h7xx_nucleo.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,7 +41,11 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define WAIT_FOREVER() \
+      while(1) \
+      { \
+        tx_thread_sleep(1); \
+      }
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -51,6 +53,8 @@ TX_THREAD      NxAppThread;
 NX_PACKET_POOL NxAppPool;
 NX_IP          NetXDuoEthIpInstance;
 /* USER CODE BEGIN PV */
+NX_UDP_SOCKET udp_socket;
+const ULONG udp_port = 5005;
 
 /* USER CODE END PV */
 
@@ -200,10 +204,47 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
 static VOID nx_app_thread_entry (ULONG thread_input)
 {
   /* USER CODE BEGIN Nx_App_Thread_Entry 0 */
+  (void)thread_input; // Silence unused parameter warning
+  UINT ret;
+  NX_PACKET *packet_ptr;
+  UINT i;
 
+  // Setup UDP socket to listen for incoming packets
+  ret = nx_udp_socket_create(&NetXDuoEthIpInstance, &udp_socket, "UDP_Print_Socket", NX_IP_NORMAL, NX_FRAGMENT_OKAY, NX_NULL, NX_NULL);
+  if (ret != NX_SUCCESS) {
+    printf("UDP socket create failed: %u\r\n", ret);
+    WAIT_FOREVER();
+  }
+
+  // Bind the socket to the specified UDP port
+  ret = nx_udp_socket_bind(&udp_socket, udp_port, TX_WAIT_FOREVER);
+  if (ret != NX_SUCCESS) {
+    printf("UDP socket bind failed: %u\r\n", ret);
+    nx_udp_socket_delete(&udp_socket);
+    WAIT_FOREVER();
+  }
+  printf("UDP endpoint listening on port %lu\r\n", udp_port);
+
+  // Turn on LED to indicate UDP listener is ready
+  BSP_LED_On(LED_GREEN);
+
+  while (1) {
+    ret = nx_udp_socket_receive(&udp_socket, &packet_ptr, NX_WAIT_FOREVER);
+    if (ret == NX_SUCCESS && packet_ptr != NX_NULL) {
+      printf("Received UDP packet: length=%lu\r\n", packet_ptr->nx_packet_length);
+      ULONG len = packet_ptr->nx_packet_length;
+      UCHAR *data = packet_ptr->nx_packet_prepend_ptr;
+      for (i = 0; i < len; i++) {
+        printf("%02X ", data[i]);
+        if ((i+1) % 16 == 0) printf("\r\n");
+      }
+      printf("\r\n");
+      nx_packet_release(packet_ptr);
+    }
+  }
   /* USER CODE END Nx_App_Thread_Entry 0 */
 
 }
-/* USER CODE BEGIN 2 */
+/* USER CODE BEGIN 1 */
 
-/* USER CODE END 2 */
+/* USER CODE END 1 */

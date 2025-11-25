@@ -27,8 +27,6 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <errno.h>
-
-//#include "usb_mouse.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,8 +78,8 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 void SystemClock_Config(void);
 static void MPU_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART3_UART_Init(void);
 static void MX_ETH_Init(void);
+static void MX_USART3_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -89,100 +87,10 @@ static void MX_USB_OTG_FS_PCD_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int parse_serialrx(void)
-{
-    char buf[32];
-    memset(buf, 0, sizeof(buf));
-    printf("Enter command:\r\n");
-    fgets(buf, sizeof(buf), stdin); // Read the whole line
-
-    // Remove trailing newline if present
-    size_t len = strlen(buf);
-    if (len > 0 && buf[len - 1] == '\n')
-        buf[len - 1] = '\0';
-    else
-        return 0;
-
-    if (buf[0] != '\0')
-        printf("got %s\r\n", buf);
-
-    /* --- Parse mov x,y --- */
-    if (strncmp(buf, "mov", 3) == 0)
-    {
-        char *params = buf + 3;
-        while (*params == ' ' || *params == '\t') params++; // Skip whitespace
-
-        if (*params == '\0')
-        {
-            printf("Error: mov requires parameters (e.g., mov 10,20)\r\n");
-            return 0;
-        }
-
-        int x, y;
-        if (sscanf(params, "%d,%d", &x, &y) == 2)
-        {
-            // Validate HID range
-            if (x >= -127 && x <= 127 && y >= -127 && y <= 127)
-            {
-                mouse_move((int8_t)x, (int8_t)y);
-                printf("Sent: mov %d,%d\r\n", x, y);
-            }
-            else
-            {
-                printf("Error: x and y must be between -127 and 127\r\n");
-            }
-        }
-        else
-        {
-            printf("Error: invalid mov format. Use: mov x,y\r\n");
-        }
-
-        return 0;
-    }
-
-    /* --- Parse click a --- */
-    if (strncmp(buf, "click", 5) == 0)
-    {
-        char *param = buf + 5;
-        while (*param == ' ' || *param == '\t') param++; // Skip whitespace
-
-        if (*param == '\0')
-        {
-            printf("Error: click requires a button number\r\n");
-            return 0;
-        }
-
-        int btn;
-        if (sscanf(param, "%d", &btn) == 1 && btn > 0)
-        {
-            uint8_t btn_mask = 0;
-            if (btn == 1) btn_mask = MOUSE_BTN_LEFT;
-            else if (btn == 2) btn_mask = MOUSE_BTN_RIGHT;
-            else if (btn == 3) btn_mask = MOUSE_BTN_MIDDLE;
-            else
-            {
-                printf("Error: button must be 1 (left), 2 (right), or 3 (middle)\r\n");
-                return 0;
-            }
-
-            mouse_press(btn_mask);
-            HAL_Delay(100);
-            mouse_release(btn_mask);
-
-            printf("Sent: click %d\r\n", btn);
-        }
-        else
-        {
-            printf("Error: invalid button number\r\n");
-        }
-
-        return 0;
-    }
-
-    printf("Unknown command\r\n");
-    return 0;
+int __io_putchar(int ch) {
+  HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
+  return ch;
 }
-
 /* USER CODE END 0 */
 
 /**
@@ -225,13 +133,23 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART3_UART_Init();
   MX_ETH_Init();
+  MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
-  printf("Initialized!\r\n");
 
+  printf("Peripherals Initialized\r\n");
+  // wait for ethernet, otherwise it will not work
+  HAL_Delay(2000);
   /* USER CODE END 2 */
+
+  /* Initialize leds */
+  BSP_LED_Init(LED_GREEN);
+  BSP_LED_Init(LED_BLUE);
+  BSP_LED_Init(LED_RED);
+
+  /* Initialize USER push-button, will be used to trigger an interrupt each time it's pressed.*/
+  BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
 
   MX_ThreadX_Init();
 
@@ -241,6 +159,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -446,16 +365,45 @@ static void MX_USB_OTG_FS_PCD_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_14, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PC13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB0 PB14 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_14;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LD2_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -463,7 +411,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
 // For printf function to work
 int _write(int fd, char* ptr, int len) {
   HAL_StatusTypeDef hstatus;
@@ -524,7 +471,7 @@ void MPU_Config(void)
   */
   MPU_InitStruct.Number = MPU_REGION_NUMBER1;
   MPU_InitStruct.BaseAddress = 0x30040000;
-  MPU_InitStruct.Size = MPU_REGION_SIZE_32B;
+  MPU_InitStruct.Size = MPU_REGION_SIZE_32KB;
   MPU_InitStruct.SubRegionDisable = 0x0;
   MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
   MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
